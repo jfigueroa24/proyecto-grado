@@ -23,10 +23,45 @@ export class modelUser {
         'SELECT * FROM usuarios WHERE email = $1',
         [email]
       );
-      //SOLUCIONAR PROBLEMA DE NO CREAR USUARIOS
       return result.rows[0];
     } catch (error) {
-      throw new Error('Error al buscar el usuario por email');
+      throw new Error('Error al buscar el usuario por email' + error.message);
     }
+  }
+
+  static async findByBasePath(base_path) {
+    try {
+      const result = await pool.query(
+        'SELECT * FROM usuarios WHERE base_path = $1',
+        [base_path]
+      );
+      return result.rows[0];
+    } catch (error) {
+      throw new Error(
+        'Error al buscar el usuario por basepath' + error.message
+      );
+    }
+  }
+
+  static async findById(id_user) {
+    try {
+      const result = await pool.query('SELECT * FROM usuarios WHERE id = $1', [
+        id_user,
+      ]);
+      return result.rows[0];
+    } catch (error) {
+      throw new Error(
+        'Error al buscar el usuario por basepath' + error.message
+      );
+    }
+  }
+
+  static async getIdByBasePath(base_path) {
+    const result = await pool.query(
+      'SELECT id FROM usuarios WHERE base_path = $1',
+      [base_path]
+    );
+
+    return result.rows[0].id;
   }
 }

@@ -1,7 +1,6 @@
 import { modelUser } from '../models/userModel.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import { pool } from '../config/db.js';
 import { JWT_SECRET } from '../config.js';
 
 export class userController {
@@ -40,7 +39,6 @@ export class userController {
       if (!verifyPassword) {
         return res.status(400).json({ error: 'Incorrect password' });
       }
-      console.log('JWT', pool.JWT_SECRET);
       const token = jwt.sign(
         { id_user: user.id, basePath: user.base_path },
         JWT_SECRET,
