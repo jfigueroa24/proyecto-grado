@@ -4,20 +4,21 @@ import { randomUUID } from 'node:crypto';
 export class modelResponse {
   static async createResponse(api_id, json_data) {
     try {
-      const jsonWithHash = json_data.map((item) => {
-        const id_hash = '_' + randomUUID();
+      console.log(api_id);
+      console.log(json_data);
+      const insertPromises = json_data.map(async (item) => {
+        const indice = randomUUID();
 
-        return {
-          ...item,
-          id_hash: id_hash,
-        };
+        const result = await pool.query(
+          'INSERT INTO respuestas (api_id, indice, json_data) VALUES ($1, $2, $3) RETURNING *',
+          [api_id, indice, JSON.stringify(item)]
+        );
+        return result.rows[0];
       });
-      console.log(jsonWithHash);
-      const result = await pool.query(
-        'INSERT INTO respuestas (api_id,json_data) VALUES ($1,$2) RETURNING *',
-        [api_id, JSON.stringify(jsonWithHash)]
-      );
-      return result.rows[0];
+
+      const insertedRows = await Promise.all(insertPromises);
+
+      return insertedRows;
     } catch (error) {
       console.log(error);
       throw new Error(`Error creating response: ${error.message}`);
@@ -27,109 +28,63 @@ export class modelResponse {
   static async getResponses(api_id) {
     try {
       const result = await pool.query(
-        'SELECT json_data FROM respuestas WHERE api_id = $1',
+        'SELECT indice, json_data FROM respuestas WHERE api_id = $1',
         [api_id]
       );
-      return result.rows[0]?.json_data || [];
+      return result.rows.map((row) => ({
+        indice: row.indice,
+        json_data: row.json_data,
+      }));
     } catch (error) {
       throw new Error(`Error fetching response: ${error.message}`);
     }
   }
 
-  static async getResponseId(api_id, idRegistro) {
+  static async getResponseId(api_id, indice) {
     try {
       const result = await pool.query(
-        'SELECT json_data FROM respuestas WHERE api_id = $1',
-        [api_id]
+        'SELECT json_data FROM respuestas WHERE indice = $1 AND api_id = $2',
+        [indice, api_id]
       );
 
       if (result.rows.length === 0) {
         return null;
       }
-      const jsonData = result.rows[0].json_data;
-
-      const response = jsonData.find((item) => item.id_hash === idRegistro);
-      return response || null;
+      return result.rows[0];
     } catch (error) {
-      throw new Error(`Error fetching response by ID: ${error.message}`);
+      throw new Error(`Error fetching response by Index: ${error.message}`);
     }
   }
 
-  static async updateResponse(nombreApi, idRegistro, updatedData) {
+  static async updateResponse(api_id, indice, updatedData) {
     try {
-      const { rows } = await pool.query(
-        'SELECT id FROM apis WHERE nombre = $1',
-        [nombreApi]
-      );
-      const api_id = rows[0]?.id;
-      if (!api_id) {
-        return null;
-      }
       const result = await pool.query(
-        'SELECT json_data FROM respuestas WHERE api_id = $1',
-        [api_id]
+        'UPDATE respuestas SET json_data = $1 WHERE api_id = $2 AND indice = $3 RETURNING *;',
+        [updatedData, api_id, indice]
       );
+
       if (result.rows.length === 0) {
         return null;
       }
-      const jsonData = result.rows[0].json_data;
 
-      const recordExists = jsonData.some((item) => item.id_hash === idRegistro);
-      if (!recordExists) {
-        return null;
-      }
-
-      const updatedJsonData = jsonData.map((item) => {
-        if (item.id_hash === idRegistro) {
-          return { ...item, ...updatedData };
-        }
-        return item;
-      });
-      const updatedResult = await pool.query(
-        'UPDATE respuestas SET json_data = $1 WHERE api_id = $2 RETURNING *',
-        [JSON.stringify(updatedJsonData), api_id]
-      );
-      return updatedResult.rows[0];
+      return result.rows[0];
     } catch (error) {
       throw new Error(`Error updating response: ${error.message}`);
     }
   }
 
-  static async deleteResponse(nombreApi, idRegistro) {
+  static async deleteResponse(api_id, indice) {
     try {
-      const { rows } = await pool.query(
-        'SELECT id FROM apis WHERE nombre = $1',
-        [nombreApi]
-      );
-      const api_id = rows[0]?.id;
-      if (!api_id) {
-        return null;
-      }
       const result = await pool.query(
-        'SELECT json_data FROM respuestas WHERE api_id = $1',
-        [api_id]
+        'DELETE FROM respuestas WHERE api_id = $1 AND indice = $2 RETURNING *;',
+        [api_id, indice]
       );
+
       if (result.rows.length === 0) {
         return null;
       }
 
-      const jsonData = result.rows[0].json_data;
-
-      const recordExists = jsonData.some((item) => item.id_hash === idRegistro);
-      if (!recordExists) {
-        return null;
-      }
-
-      const updatedJsonData = jsonData.filter(
-        (item) => item.id_hash !== idRegistro
-      );
-
-      const updatedResult = await pool.query(
-        'UPDATE respuestas SET json_data = $1 WHERE api_id = $2 RETURNING *',
-        [JSON.stringify(updatedJsonData), api_id]
-      );
-
-      return updatedResult.rows[0];
+      return result.rows[0];
     } catch (error) {
       throw new Error(`Error deleting response: ${error.message}`);
     }

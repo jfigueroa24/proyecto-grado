@@ -11,7 +11,8 @@ export const authenticate = async (req, res, next) => {
     }
     req.user = {
       id_user: user.id,
-      basePath: user.base_path,
+      base_path: user.base_path,
+      indice: user.indice,
     };
     next();
   } catch (error) {

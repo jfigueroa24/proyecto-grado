@@ -5,31 +5,31 @@ import { validateAllowedMethods } from '../middlewares/allowedMethodsMiddleware.
 export const publicApiRouter = Router();
 
 publicApiRouter.get(
-  '/:base_path/:nombreApi/',
+  '/:base_path/:nombre_api',
   validateAllowedMethods('GET'),
   apiController.getResponses
 );
 
 publicApiRouter.get(
-  '/:base_path/:nombreApi/:idRegistro',
+  '/:base_path/:nombre_api/:indice',
   validateAllowedMethods('GET'),
   apiController.getResponseById
 );
 
 publicApiRouter.post(
-  '/:base_path/:nombreApi',
+  '/:base_path/:nombre_api',
   validateAllowedMethods('POST'),
   apiController.createResponse
 );
-
+//ARREGLAR POSIBLES ERRORES
 publicApiRouter.put(
-  '/:base_path/:nombreApi/:idRegistro',
+  '/:base_path/:nombre_api/:indice',
   validateAllowedMethods('PUT'),
-  apiController.updateApiResponse
+  apiController.updateResponse
 );
-
+//ARREGLAR POSIBLES ERRORES
 publicApiRouter.delete(
-  '/:base_path/:nombreApi/:idRegistro',
+  '/:base_path/:nombre_api/:indice',
   validateAllowedMethods('DELETE'),
-  apiController.deleteApiResponse
+  apiController.deleteResponse
 );

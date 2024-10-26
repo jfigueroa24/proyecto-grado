@@ -5,10 +5,10 @@ export class modelUser {
   static async createUser({ nombre, email, password }) {
     try {
       const base_path = randomUUID();
-      const id = randomUUID();
+      console.log({ nombre, email, password });
       const newUser = await pool.query(
-        'INSERT INTO usuarios (id, nombre, email, password, base_path) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-        [id, nombre, email, password, base_path]
+        'INSERT INTO usuarios (nombre, email, password, base_path) VALUES ($1, $2, $3, $4) RETURNING *;',
+        [nombre, email, password, base_path]
       );
 
       return newUser.rows[0];
@@ -29,39 +29,31 @@ export class modelUser {
     }
   }
 
-  static async findByBasePath(base_path) {
-    try {
-      const result = await pool.query(
-        'SELECT * FROM usuarios WHERE base_path = $1',
-        [base_path]
-      );
-      return result.rows[0];
-    } catch (error) {
-      throw new Error(
-        'Error al buscar el usuario por basepath' + error.message
-      );
-    }
-  }
-
-  static async findById(id_user) {
+  static async findById(id) {
     try {
       const result = await pool.query('SELECT * FROM usuarios WHERE id = $1', [
-        id_user,
+        id,
       ]);
       return result.rows[0];
     } catch (error) {
-      throw new Error(
-        'Error al buscar el usuario por basepath' + error.message
-      );
+      throw new Error('Error fetching by Id' + error.message);
     }
   }
 
-  static async getIdByBasePath(base_path) {
+  static async getApiByBasePathAndName(base_path, nombre_api) {
     const result = await pool.query(
-      'SELECT id FROM usuarios WHERE base_path = $1',
-      [base_path]
+      'SELECT apis.id,allowed_methods FROM apis JOIN usuarios ON usuarios.id = apis.id_user WHERE usuarios.base_path = $1 AND apis.nombre = $2',
+      [base_path, nombre_api]
     );
 
-    return result.rows[0].id;
+    return result.rows[0];
+  }
+
+  static async getBasePath(base_path) {
+    const result = await pool.query(
+      'SELECT base_path FROM usuarios WHERE base_path = $1',
+      [base_path]
+    );
+    return result.rows[0];
   }
 }

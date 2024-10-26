@@ -1,44 +1,30 @@
 import { Router } from 'express';
 import { apiController } from '../controllers/apiController.js';
-import { validateAllowedMethods } from '../middlewares/allowedMethodsMiddleware.js';
 import { authenticate } from '../middlewares/authenticationMiddleware.js';
 import { validateApiOwnership } from '../middlewares/apiOwnerMiddleware.js';
-import { validateBasePath } from '../middlewares/validateBasePath.js';
 
 export const privateApiRouter = Router();
 
 privateApiRouter.use(authenticate);
 
-privateApiRouter.get(
-  '/:base_path/',
-  validateApiOwnership,
-  validateAllowedMethods('GET'),
-  apiController.getAllApis
-);
+privateApiRouter.get('/get-apis', validateApiOwnership, apiController.getApis);
 
 privateApiRouter.get(
-  '/:base_path/:nombreApi',
+  '/get-api/:id',
   validateApiOwnership,
-  validateAllowedMethods('GET'),
   apiController.getApi
 );
 
-privateApiRouter.post(
-  '/:base_path/',
-  validateBasePath,
-  apiController.createApi
-);
+privateApiRouter.post('/create-api', apiController.createApi);
 
 privateApiRouter.put(
-  '/:base_path/:nombreApi',
-  validateAllowedMethods('PUT'),
+  '/update-api/:id',
   validateApiOwnership,
-  apiController.updateApiMethods
+  apiController.updateApi
 );
 
 privateApiRouter.delete(
-  '/:base_path/:nombreApi',
-  validateAllowedMethods('DELETE'),
+  '/delete-api/:id',
   validateApiOwnership,
   apiController.deleteApi
 );

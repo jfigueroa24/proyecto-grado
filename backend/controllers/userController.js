@@ -40,10 +40,11 @@ export class userController {
         return res.status(400).json({ error: 'Incorrect password' });
       }
       const token = jwt.sign(
-        { id_user: user.id, basePath: user.base_path },
+        { id_user: user.id, basePath: user.base_path, index: user.indice },
         JWT_SECRET,
         { expiresIn: '1h' }
       );
+
       return res
         .status(200)
         .json({ mensaje: 'Successful login', token: token });
