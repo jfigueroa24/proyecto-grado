@@ -29,7 +29,6 @@ export class userController {
   // LOGIN
   static async login(req, res) {
     const { email, password } = req.body;
-
     try {
       const user = await modelUser.findByEmail(email);
       if (!user) {
