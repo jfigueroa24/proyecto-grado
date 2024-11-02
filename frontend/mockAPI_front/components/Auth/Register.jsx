@@ -1,15 +1,18 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom'
+import {TextField, Button, Container,Typography} from '@mui/material'
+
 
 function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [nombre, setNombre] = useState('');
-
+  const navigate = useNavigate()
 
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:3000/admin/register/',{
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/admin/register/`,{
         method:'POST',
         headers: {'Content-Type':'application/json'},
         body: JSON.stringify({nombre, email, password})
@@ -17,40 +20,58 @@ function Register() {
       
       const data = await response.json()
       if(response.ok){
-        alert("Cuenta creada con éxito. Inicia sesión.");
+        alert("Account successfully created - Login.");
+        navigate('/login');
       }else{
-        alert(data.message)
+        alert(data.error || 'Error creating user')
       }
     } catch (error) {
-      console.error("Error al registrar usuario:", error);
+      console.error("Error creating user:", error);
     }
   };
 
   return (
-    <div>
-      <h2>Registro</h2>
-      <form onSubmit={handleRegister}>
-      <input
+    <Container maxWidth="xs">
+      <Typography variant="h4" align="center" gutterBottom>Mock API</Typography>
+        <form onSubmit={handleRegister}>
+        <TextField
+          label="Nombre"
           type="text"
-          placeholder="Nombre"
+          fullWidth
+          margin="normal"
           value={nombre}
           onChange={(e) => setNombre(e.target.value)}
+          required
         />
-        <input
+        <TextField
+          label="Email"
           type="email"
-          placeholder="Email"
+          fullWidth
+          margin="normal"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          required
         />
-        <input
+        <TextField
+          label="Password"
           type="password"
-          placeholder="Password"
+          fullWidth
+          margin="normal"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          required
         />
-        <button type="submit">Registrarse</button>
-      </form>
-    </div>
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          fullWidth
+          sx={{ mt: 2 }}
+        >
+          Register
+        </Button>
+        </form>
+    </Container>
   );
 }
 

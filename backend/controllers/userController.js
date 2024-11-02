@@ -23,7 +23,7 @@ export class userController {
         .status(201)
         .json({ message: 'User successfully created', user: newUser });
     } catch (error) {
-      res.status(500).json({ error: 'Error creating user' });
+      res.status(500).json({ mensaje: 'Error creating user' });
     }
   }
   // LOGIN
@@ -32,14 +32,19 @@ export class userController {
     try {
       const user = await modelUser.findByEmail(email);
       if (!user) {
-        return res.status(404).json({ error: 'The user does not exist' });
+        return res.status(404).json({ mensaje: 'The user does not exist' });
       }
       const verifyPassword = await bcrypt.compare(password, user.password);
       if (!verifyPassword) {
-        return res.status(400).json({ error: 'Incorrect password' });
+        return res.status(400).json({ mensaje: 'Incorrect password' });
       }
       const token = jwt.sign(
-        { id_user: user.id, basePath: user.base_path, index: user.indice },
+        {
+          id_user: user.id,
+          basePath: user.base_path,
+          index: user.indice,
+          nombre: user.nombre,
+        },
         JWT_SECRET,
         { expiresIn: '1h' }
       );
@@ -48,7 +53,29 @@ export class userController {
         .status(200)
         .json({ mensaje: 'Successful login', token: token });
     } catch (error) {
-      return res.status(500).json({ message: error.message });
+      return res.status(500).json({ mensaje: error.message });
+    }
+  }
+  static async getUser(req, res) {
+    const token = req.headers.authorization.split(' ')[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    if (!token || !decoded) {
+      return res.status(401).json({ error: 'Token is expired o invalidated' });
+    }
+    return res.status(200).json({
+      dataUser: {
+        index: decoded.index,
+        name: decoded.nombre,
+        base_path: decoded.basePath,
+      },
+    });
+  }
+  static async logout(req, res) {
+    try {
+      return res.status(200).json({ mensaje: 'Successfull logout' });
+    } catch (error) {
+      return res.status(500).json({ mensaje: error.message });
     }
   }
 }

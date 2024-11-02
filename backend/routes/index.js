@@ -7,6 +7,7 @@ import { privateApiRouter } from './privateRoutes.js';
 export const router = Router();
 router.post('/admin/register', userController.create);
 router.post('/admin/login', userController.login);
+router.get('/admin/logout', userController.logout);
 
 router.use('/public/', publicApiRouter);
 

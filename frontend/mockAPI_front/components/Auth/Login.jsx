@@ -2,7 +2,9 @@ import { useState } from 'react';
 import {useNavigate} from 'react-router-dom'
 import {TextField, Button, Container,Typography} from '@mui/material'
 
+
 function Login() {
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate()
@@ -21,16 +23,15 @@ function Login() {
         alert(data.mensaje);
         navigate('/get-apis/');
       }else{
-        alert(data.error || 'Error al iniciar sesion')
+        alert(data.mensaje || 'Error logging in')
       }
     } catch (error) {
-      console.error("Error en la solicitud de login:", error);
-      alert('Error en la solicitud de login');    }
+      alert('Error logging in:', error);    }
   };
 
   return (
-    <Container>
-      <Typography>
+    <Container maxWidth="xs">
+      <Typography variant="h4" align="center" gutterBottom>Mock API</Typography>
         <form onSubmit={handleLogin}>
         <TextField
           label="Email"
@@ -60,7 +61,6 @@ function Login() {
           Login
         </Button>
         </form>
-      </Typography>
     </Container>
   );
 }
