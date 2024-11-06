@@ -35,9 +35,9 @@ export class apiController {
   static async createApi(req, res) {
     try {
       const { id_user } = req.user;
-      const { nombre, description, allowed_methods, json_data } = req.body;
+      const { name, description, allowed_methods, json_data } = req.body;
       const newApi = await modelApi.createApi({
-        nombre,
+        name,
         description,
         id_user,
         allowed_methods,

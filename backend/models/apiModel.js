@@ -3,9 +3,10 @@ import { pool } from '../config/db.js';
 export class modelApi {
   static async getAllApis(id_user) {
     try {
-      const result = await pool.query('SELECT * FROM apis WHERE id_user = $1', [
-        id_user,
-      ]);
+      const result = await pool.query(
+        'SELECT * FROM apis WHERE id_user = $1;',
+        [id_user]
+      );
       return result.rows;
     } catch (error) {
       throw new Error('Error retrieving APIs' + error.message);
@@ -14,7 +15,7 @@ export class modelApi {
   static async getApi(api_id, id_user) {
     try {
       const result = await pool.query(
-        'SELECT * FROM apis WHERE id = $1 AND id_user = $2',
+        'SELECT * FROM apis WHERE id = $1 AND id_user = $2;',
         [api_id, id_user]
       );
       return result.rows;
@@ -23,11 +24,11 @@ export class modelApi {
     }
   }
 
-  static async createApi({ nombre, description, id_user, allowed_methods }) {
+  static async createApi({ name, description, id_user, allowed_methods }) {
     try {
       const apiExists = await pool.query(
         'SELECT * FROM apis WHERE id_user = $1 AND nombre = $2;',
-        [id_user, nombre]
+        [id_user, name]
       );
 
       if (apiExists.rowCount > 0) {
@@ -35,8 +36,8 @@ export class modelApi {
       }
 
       const result = await pool.query(
-        'INSERT INTO apis (nombre, description, id_user, allowed_methods) VALUES ($1, $2, $3, $4) RETURNING *',
-        [nombre, description, id_user, allowed_methods]
+        'INSERT INTO apis (nombre, description, id_user, allowed_methods) VALUES ($1, $2, $3, $4) RETURNING *;',
+        [name, description, id_user, allowed_methods]
       );
       return result.rows[0];
     } catch (error) {
@@ -81,7 +82,7 @@ export class modelApi {
   static async findApiById(id, id_user) {
     try {
       const result = await pool.query(
-        'SELECT * FROM apis WHERE id = $1 AND id_user = $2',
+        'SELECT * FROM apis WHERE id = $1 AND id_user = $2;',
         [id, id_user]
       );
       return result.rows;

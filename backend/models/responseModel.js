@@ -4,13 +4,11 @@ import { randomUUID } from 'node:crypto';
 export class modelResponse {
   static async createResponse(api_id, json_data) {
     try {
-      console.log(api_id);
-      console.log(json_data);
       const insertPromises = json_data.map(async (item) => {
         const indice = randomUUID();
 
         const result = await pool.query(
-          'INSERT INTO respuestas (api_id, indice, json_data) VALUES ($1, $2, $3) RETURNING *',
+          'INSERT INTO respuestas (api_id, indice, json_data) VALUES ($1, $2, $3) RETURNING *;',
           [api_id, indice, JSON.stringify(item)]
         );
         return result.rows[0];
@@ -28,7 +26,7 @@ export class modelResponse {
   static async getResponses(api_id) {
     try {
       const result = await pool.query(
-        'SELECT indice, json_data FROM respuestas WHERE api_id = $1',
+        'SELECT indice, json_data FROM respuestas WHERE api_id = $1;',
         [api_id]
       );
       return result.rows.map((row) => ({
@@ -43,7 +41,7 @@ export class modelResponse {
   static async getResponseId(api_id, indice) {
     try {
       const result = await pool.query(
-        'SELECT json_data FROM respuestas WHERE indice = $1 AND api_id = $2',
+        'SELECT json_data FROM respuestas WHERE indice = $1 AND api_id = $2;',
         [indice, api_id]
       );
 

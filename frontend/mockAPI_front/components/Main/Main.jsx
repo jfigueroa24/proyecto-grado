@@ -1,4 +1,4 @@
-import UserContext from "../Auth/Context/UserContext";
+import UserContext from "../Auth/UserContext"
 import PropTypes from "prop-types";
 
 function Main({ children }) {

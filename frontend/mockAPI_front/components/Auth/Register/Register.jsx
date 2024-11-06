@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom'
 import {TextField, Button, Container,Typography} from '@mui/material'
-
+import styles from './register.module.scss'
 
 function Register() {
   const [email, setEmail] = useState('');
@@ -31,11 +31,12 @@ function Register() {
   };
 
   return (
-    <Container maxWidth="xs">
-      <Typography variant="h4" align="center" gutterBottom>Mock API</Typography>
-        <form onSubmit={handleRegister}>
+    <Container maxWidth="sm" className={styles.registerContainer}>
+      <Typography className={styles.titleRegister} variant="h4" align="center" gutterBottom>Register</Typography>
+        <form className={styles.formRegister} onSubmit={handleRegister}>
         <TextField
-          label="Nombre"
+          className={styles.TextField}
+          label="Name"
           type="text"
           fullWidth
           margin="normal"
@@ -44,6 +45,7 @@ function Register() {
           required
         />
         <TextField
+          className={styles.TextField}
           label="Email"
           type="email"
           fullWidth
@@ -53,6 +55,7 @@ function Register() {
           required
         />
         <TextField
+          className={styles.TextField}
           label="Password"
           type="password"
           fullWidth
@@ -62,6 +65,7 @@ function Register() {
           required
         />
         <Button
+          className={styles.Button}
           type="submit"
           variant="contained"
           color="primary"

@@ -20,7 +20,7 @@ export class modelUser {
   static async findByEmail(email) {
     try {
       const result = await pool.query(
-        'SELECT * FROM usuarios WHERE email = $1',
+        'SELECT * FROM usuarios WHERE email = $1;',
         [email]
       );
       return result.rows[0];
@@ -31,7 +31,7 @@ export class modelUser {
 
   static async findById(id) {
     try {
-      const result = await pool.query('SELECT * FROM usuarios WHERE id = $1', [
+      const result = await pool.query('SELECT * FROM usuarios WHERE id = $1;', [
         id,
       ]);
       return result.rows[0];
@@ -42,7 +42,7 @@ export class modelUser {
 
   static async getApiByBasePathAndName(base_path, nombre_api) {
     const result = await pool.query(
-      'SELECT apis.id,allowed_methods FROM apis JOIN usuarios ON usuarios.id = apis.id_user WHERE usuarios.base_path = $1 AND apis.nombre = $2',
+      'SELECT apis.id,allowed_methods FROM apis JOIN usuarios ON usuarios.id = apis.id_user WHERE usuarios.base_path = $1 AND apis.nombre = $2;',
       [base_path, nombre_api]
     );
 
@@ -51,7 +51,7 @@ export class modelUser {
 
   static async getBasePath(base_path) {
     const result = await pool.query(
-      'SELECT base_path FROM usuarios WHERE base_path = $1',
+      'SELECT base_path FROM usuarios WHERE base_path = $1;',
       [base_path]
     );
     return result.rows[0];
