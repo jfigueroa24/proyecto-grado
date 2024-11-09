@@ -14,7 +14,7 @@ import config from "../../src/config.js";
 import { authContext } from "../Auth/AuthContext.js";
 
 function APIList() {
-  const { token } = useContext(authContext);
+  const { token, user } = useContext(authContext);
 
   const [apis, setApis] = useState([]);
   const navigate = useNavigate();
@@ -45,25 +45,40 @@ function APIList() {
     userApis();
   }, [apis]);
 
-  const handleDelete = async () =>{
+  const handleShowResponses = async (index) =>{
+    const res = await fetch(`${config.apiUrl}/api/get-api/${index}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const { api } = await res.json();
+
+    const url = `${config.apiUrl}/public/${user.base_path}/${api[0].nombre}/`;
+    window.open(url, '_blank')
+  }
+
+  const handleDelete = async (index) =>{
     if (!token) {
       return;
     }
     try {
-      const response = await fetch(`${config.apiUrl}/api/get-apis/`, {
+      const deleteAPI = confirm("Do you want delete this API?");
+      if(!deleteAPI) return;
+
+      const response = await fetch(`${config.apiUrl}/api/delete-api/${index}`, {
+        method:"DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await response.json();
       if (response.ok) {
-        setApis(data);
-      } else if (apis.length === 0){
+        alert(data.message)
+        setApis((prevApis) => prevApis.filter((api) => api.indice !== index));
+      } else if (data.length === 0){
         return
       }else{
-        alert("Error loading APIs");
+        alert("Error deleting APIs");
       }
     } catch (error) {
-      console.error("Error loading APIs:", error);
-      alert("Error loading APIs");
+      console.error("Error deleting APIs:", error);
+      alert("Error deleting APIs");
     }
   }
 
@@ -99,6 +114,7 @@ function APIList() {
                 sx={{ m: 2, color: "#3c5969" }}
                 variant="text"
                 className={styles.buttonApi}
+                onClick={() => handleShowResponses(item.api.id)}
               >
                 Copy API
               </Button>
@@ -114,7 +130,7 @@ function APIList() {
                 sx={{ m: 2, color: "#3c5969" }}
                 variant="text"
                 className={styles.buttonApi}
-                onClick={handleDelete}
+                onClick={() => handleDelete(item.api.id)}
               >
                 Delete API
               </Button>
