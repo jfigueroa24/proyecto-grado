@@ -19,6 +19,8 @@ function InitialHome(){
       const data = await response.json();
       if (response.ok) {
         setCount(data?.length);
+      } else if (count.length === 0){
+        return
       } else {
         alert("Error loading APIs");
       }

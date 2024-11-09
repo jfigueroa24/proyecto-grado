@@ -31,8 +31,11 @@ function APIList() {
         const data = await response.json();
         if (response.ok) {
           setApis(data);
-        } else {
+        } else if (apis.length === 0){
+          return
+        }else{
           alert("Error loading APIs");
+          navigate("/login")
         }
       } catch (error) {
         console.error("Error loading APIs:", error);
@@ -40,18 +43,40 @@ function APIList() {
       }
     };
     userApis();
-  }, []);
+  }, [apis]);
+
+  const handleDelete = async () =>{
+    if (!token) {
+      return;
+    }
+    try {
+      const response = await fetch(`${config.apiUrl}/api/get-apis/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setApis(data);
+      } else if (apis.length === 0){
+        return
+      }else{
+        alert("Error loading APIs");
+      }
+    } catch (error) {
+      console.error("Error loading APIs:", error);
+      alert("Error loading APIs");
+    }
+  }
 
   return (
     <Container maxWidth="md" className={styles.apiContainer}>
       <NavBar />
-      <Typography sx={{ m: 0 }} variant="h4" align="center" gutterBottom>
-        Mis APIs
+      <Typography sx={{ m: 0,fontWeight:"bold" }} variant="h4" align="center" gutterBottom>
+        My APIs
       </Typography>
 
       {apis.length === 0 ? (
-        <Typography sx={{ mt: 5 }} variant="body1" align="center" gutterBottom>
-          No tienes ninguna API. ¡Crea una nueva!
+        <Typography sx={{ m: 2 }} variant="body1" align="center" gutterBottom>
+          You do not have an API, create a new one!
         </Typography>
       ) : (
         <List>
@@ -66,32 +91,32 @@ function APIList() {
                 variant="text"
                 color="secondary"
                 className={styles.buttonApi}
+                onClick={() => navigate(`/home/get-api/${item.api.id}/responses`)}
               >
-                Ver API
+                Show API
               </Button>
               <Button
                 sx={{ m: 2, color: "#3c5969" }}
                 variant="text"
-                color="secondary"
                 className={styles.buttonApi}
               >
-                Copiar API
+                Copy API
               </Button>
               <Button
                 sx={{ m: 2, color: "#3c5969" }}
                 variant="text"
-                color="secondary"
                 className={styles.buttonApi}
+                onClick={() => navigate(`/home/edit-api/${item.api.id}`)}
               >
-                Editar API
+                Edit API
               </Button>
               <Button
                 sx={{ m: 2, color: "#3c5969" }}
                 variant="text"
-                color="secondary"
                 className={styles.buttonApi}
+                onClick={handleDelete}
               >
-                Borrar API
+                Delete API
               </Button>
             </ListItem>
           ))}
@@ -105,8 +130,8 @@ function APIList() {
         fullWidth
         onClick={() => navigate("/home/create-api")}
         sx={{ mt: 2 }}
-      >
-        Crear nueva API
+      > 
+      Create a new api
       </Button>
     </Container>
   );

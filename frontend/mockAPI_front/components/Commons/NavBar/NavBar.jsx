@@ -40,7 +40,7 @@ const NavBar = () => {
           }}
         >
           <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-            Bienvenido, {user.name}
+            Welcome, {user.name}
           </Typography>
           <Button
             component={RouterLink}
@@ -49,7 +49,7 @@ const NavBar = () => {
             color="inherit"
             sx={{ textTransform: "none" }}
           >
-            Mis APIs
+            My APIs
           </Button>
           
         </Box>
@@ -63,7 +63,7 @@ const NavBar = () => {
             onClick={handleLogout}
             sx={{ textTransform: "none" }}
           >
-            Cerrar sesión
+            Log out
           </Button>
         </Box>
       </Toolbar>

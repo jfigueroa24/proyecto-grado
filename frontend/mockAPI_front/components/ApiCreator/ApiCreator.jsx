@@ -12,6 +12,7 @@ import styles from "./api-creator.module.scss";
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { authContext } from "../Auth/AuthContext";
+import config from "../../src/config";
 
 function ApiCreator() {
   const [name, setName] = useState("");
@@ -21,35 +22,46 @@ function ApiCreator() {
   const { token } = useContext(authContext);
   const navigate = useNavigate();
 
-
-  const handleCheckboxChange = (e) =>{
-    const {value, checked }= e.target
-    setAllowedMethods((prevMethods) => 
-      checked ? [...prevMethods, value] : prevMethods.filter((method) => method !== value)
+  const handleCheckboxChange = (e) => {
+    const { value, checked } = e.target;
+    setAllowedMethods((prevMethods) =>
+      checked
+        ? [...prevMethods, value]
+        : prevMethods.filter((method) => method !== value)
     );
-  }
-  const handleJsonDataChange = (e) =>{
-    setJson_data(e.target.value)
-  }
+  };
+  const handleJsonDataChange = (e) => {
+    setJson_data(e.target.value);
+  };
 
   const handleCreate = async (e) => {
     e.preventDefault();
 
     let parsedJsonData;
-    try{
-      parsedJsonData = JSON.parse(json_data)
-    }catch(error){
-      alert("Invalid JSON format in JSON data field", error)
+    try {
+      parsedJsonData = JSON.parse(json_data);
+    } catch (error) {
+      alert("Invalid JSON format in JSON data field", error);
+      console.log(error)
       return;
     }
-
+    
     try {
+      console.log("CREO LA API")
       const api = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/create-api/`,
+        `${config.apiUrl}/api/create-api/`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-          body: JSON.stringify({ name, description, allowed_methods, json_data: parsedJsonData }),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            name,
+            description,
+            allowed_methods,
+            json_data: parsedJsonData,
+          }),
         }
       );
 
@@ -87,24 +99,32 @@ function ApiCreator() {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
-          <FormGroup >
+          <FormGroup>
             <FormLabel className={styles.labelApiCreator}>
               API Methods
             </FormLabel>
             <FormControlLabel
-              control={<Checkbox value={"GET"} onChange={handleCheckboxChange} />}
+              control={
+                <Checkbox value={"GET"} onChange={handleCheckboxChange} />
+              }
               label="GET"
             />
             <FormControlLabel
-              control={<Checkbox value={"POST"} onChange={handleCheckboxChange} />}
+              control={
+                <Checkbox value={"POST"} onChange={handleCheckboxChange} />
+              }
               label="POST"
             />
             <FormControlLabel
-              control={<Checkbox value={"PUT"} onChange={handleCheckboxChange} />}
+              control={
+                <Checkbox value={"PUT"} onChange={handleCheckboxChange} />
+              }
               label="PUT"
             />
             <FormControlLabel
-              control={<Checkbox value={"DELETE"} onChange={handleCheckboxChange} />}
+              control={
+                <Checkbox value={"DELETE"} onChange={handleCheckboxChange} />
+              }
               label="DELETE"
             />
           </FormGroup>
@@ -119,7 +139,15 @@ function ApiCreator() {
             onChange={handleJsonDataChange}
           />
         </div>
-        <Button className={styles.buttonSubmit} variant="contained" type="submit">Create API</Button>
+        <div className={styles.buttonSubmitContainer}>
+          <Button
+            className={styles.buttonSubmit}
+            variant="contained"
+            type="submit"
+          >
+            Create API
+          </Button>
+        </div>
       </form>
     </Container>
   );

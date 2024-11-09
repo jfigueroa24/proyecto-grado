@@ -68,12 +68,12 @@ export class apiController {
     try {
       const { id_user } = req.user;
       const { id } = req.params;
-      const { nombre, description, allowed_methods } = req.body;
+      const { name, description, allowed_methods } = req.body;
 
       const updateApi = await modelApi.updateApi(
         id,
         id_user,
-        nombre,
+        name,
         description,
         allowed_methods
       );
@@ -144,6 +144,7 @@ export class apiController {
       return res.status(500).json({ message: error.message });
     }
   }
+
   static async createResponse(req, res) {
     try {
       const { base_path, nombre_api } = req.params;

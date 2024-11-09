@@ -55,7 +55,7 @@ export class modelApi {
       if (apiExists.rowCount > 0) {
         return null;
       }
-      console.log(id, id_user, nombre, description, allowed_methods);
+
       const result = await pool.query(
         'UPDATE apis SET nombre = $1, description = $2, allowed_methods = $3 WHERE id = $4 AND id_user = $5 RETURNING *;',
         [nombre, description, allowed_methods, id, id_user]

@@ -1,10 +1,12 @@
 import { authContext } from "./AuthContext.js";
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
+import config from "../../src/config.js";
 
 const UserContext = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [user, setUser] = useState(null);
+  
 
   const getUser = async () => {
     if(user !== null){
@@ -12,7 +14,7 @@ const UserContext = ({ children }) => {
     }
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/get-user/`,{
+      const response = await fetch(`${config.apiUrl}/api/get-user/`,{
         method:'GET',
         headers: {'Authorization':`Bearer ${token}`},
       });

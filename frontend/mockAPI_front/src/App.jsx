@@ -9,6 +9,8 @@ import Home from "../components/Home/";
 import APIList from "../components/ApiList";
 import InitialHome from "../components/Home/components/InitialHome/";
 import ApiCreator from "../components/ApiCreator/";
+import ApiEditor from "../components/ApiEditor"
+import ApiResponses from "../components/ApiResponses/ApiResponses";
 
 function App() {
   return (
@@ -33,6 +35,8 @@ function App() {
           <Route path="get-apis" element={<APIList />}/>
           <Route path="*" element={<NotFound />}/>
           <Route path="create-api" element={<ApiCreator />}/>
+          <Route path="edit-api/:id" element={<ApiEditor/>}/>
+          <Route path="get-api/:id/responses" element={<ApiResponses/>}/>
         </Route>
       </Routes>
     </BrowserRouter>

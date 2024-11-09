@@ -1,15 +1,12 @@
 import { pool } from '../config/db.js';
-import { randomUUID } from 'node:crypto';
 
 export class modelResponse {
   static async createResponse(api_id, json_data) {
     try {
       const insertPromises = json_data.map(async (item) => {
-        const indice = randomUUID();
-
         const result = await pool.query(
-          'INSERT INTO respuestas (api_id, indice, json_data) VALUES ($1, $2, $3) RETURNING *;',
-          [api_id, indice, JSON.stringify(item)]
+          'INSERT INTO respuestas (api_id, json_data) VALUES ($1, $2) RETURNING *;',
+          [api_id, JSON.stringify(item)]
         );
         return result.rows[0];
       });

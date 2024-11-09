@@ -1,4 +1,4 @@
-*{
+* {
   box-sizing: border-box;
 }
 
@@ -13,7 +13,7 @@
   margin: 25px auto;
 }
 
-.title{
+.title {
   display: flex;
   justify-content: center;
   font-family: sans-serif;
@@ -23,19 +23,23 @@
 }
 
 .formContainer {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
   gap: 20px;
 }
 
 .leftColumn {
   display: flex;
   flex-direction: column;
-  gap: 10px; 
-  flex: 1;
+  gap: 10px;
+  grid-column: 1;
+  grid-row: 1;
 }
 
 .rightColumn {
-  flex: 1;
+  grid-column: 2;
+  grid-row: 1;
 }
 
 .labelApiCreator {
@@ -52,4 +56,16 @@
 .TextFieldDescription {
   width: 100%;
   background-color: #fff;
+}
+
+.buttonSubmitContainer {
+  grid-column: 1 / span 2; 
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.buttonSubmit {
+  width: 50%; 
+  text-align: center;
 }

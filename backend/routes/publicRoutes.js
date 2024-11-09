@@ -15,21 +15,3 @@ publicApiRouter.get(
   validateAllowedMethods('GET'),
   apiController.getResponseById
 );
-
-publicApiRouter.post(
-  '/:base_path/:nombre_api',
-  validateAllowedMethods('POST'),
-  apiController.createResponse
-);
-//ARREGLAR POSIBLES ERRORES
-publicApiRouter.put(
-  '/:base_path/:nombre_api/:indice',
-  validateAllowedMethods('PUT'),
-  apiController.updateResponse
-);
-//ARREGLAR POSIBLES ERRORES
-publicApiRouter.delete(
-  '/:base_path/:nombre_api/:indice',
-  validateAllowedMethods('DELETE'),
-  apiController.deleteResponse
-);
