@@ -72,14 +72,29 @@ function ApiResponses() {
   };
 
   const handleShowResponse = async (index) =>{
-    const res = await fetch(`${config.apiUrl}/api/get-api/${id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const { api } = await res.json();
-
-    
-    const url = `${config.apiUrl}/public/${user.base_path}/${api[0].nombre}/${index}`;
-    window.open(url, '_blank')
+    try {
+      const res = await fetch(`${config.apiUrl}/api/get-api/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const { api } = await res.json();
+  
+      
+      const url = `${config.apiUrl}/public/${user.base_path}/${api[0].nombre}/${index}`;
+      try {
+        if(navigator.clipboard){
+          await navigator.clipboard.writeText(url)
+          alert("URL copied to clipboard.")
+        }else{
+          alert("Interact with the application first")
+        }
+      } catch (error) {
+        console.error("Error when copying to clipboard", error)
+        alert("Could not copy URL to clipboard. Please try manually")
+      }
+    } catch (error) {
+      console.error("Error fetching Response", error)
+      alert("Error getting Response URL")
+    }
   }
 
   const handleCreateResponse = async () => {
@@ -209,6 +224,7 @@ function ApiResponses() {
     }
   };
 
+
   return (
     <Container maxWidth="lg" className={styles.container}>
       <NavBar />
@@ -231,11 +247,11 @@ function ApiResponses() {
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell align="center">Index (Response)</TableCell>
-                <TableCell align="center">Json Data</TableCell>
-                <TableCell align="center">Show Response</TableCell>
-                <TableCell align="center">Update Response</TableCell>
-                <TableCell align="center">Delete Response</TableCell>
+                <TableCell sx={{fontWeight:"bold"}} align="center">Index (Response)</TableCell>
+                <TableCell sx={{fontWeight:"bold", fontSize: 24}} align="center">Json Data</TableCell>
+                <TableCell sx={{fontWeight:"bold"}} align="center">Show Response</TableCell>
+                <TableCell sx={{fontWeight:"bold"}} align="center">Update Response</TableCell>
+                <TableCell sx={{fontWeight:"bold"}} align="center">Delete Response</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -247,12 +263,12 @@ function ApiResponses() {
                   <TableCell component="th" scope="row">
                     {item.indice}
                   </TableCell>
-                  <TableCell align="right">
+                  <TableCell align="left">
                     {typeof item.json_data === "object"
                       ? JSON.stringify(item.json_data)
                       : item.json_data}
                   </TableCell>
-                  <TableCell align="right">
+                  <TableCell align="center">
                     <Button
                       sx={{ m: 2, color: "#3c5969" }}
                       variant="text"
@@ -263,7 +279,7 @@ function ApiResponses() {
                       Show
                     </Button>
                   </TableCell>
-                  <TableCell align="right">
+                  <TableCell align="center">
                     <Button
                       sx={{ m: 2, color: "#3c5969" }}
                       variant="text"
@@ -274,7 +290,7 @@ function ApiResponses() {
                       Edit
                     </Button>
                   </TableCell>
-                  <TableCell align="right">
+                  <TableCell align="center">
                     <Button
                       sx={{ m: 2, color: "#3c5969" }}
                       variant="text"
@@ -305,7 +321,12 @@ function ApiResponses() {
       </Button>
 
       <Modal className={styles.modalStyle} open={isModalOpen} onClose={handleCloseModal}>
-        <Box className={styles.modalBoxStyle}>
+        <Box className={styles.modalBoxStyle}
+        sx={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          overflowY:'scroll'
+        }}>
           <Typography sx={{fontWeight: "bold",fontSize: 24}} className={styles.title}>Create New Response</Typography>
           <TextareaAutosize
             minRows={30}
@@ -313,15 +334,21 @@ function ApiResponses() {
             placeholder="Enter JSON data here"
             value={jsonInput}
             onChange={(e) => setJsonInput(e.target.value)}
+            style={{
+              width: '100%',
+              maxHeight: '60vh', 
+              overflowY: 'auto',
+              marginTop: '16px',
+            }}
           />
           <Button
             variant="contained"
             color="primary"
             onClick={handleCreateResponse}
-            sx={{ mt: 2 }}
+            sx={{ mt: 2, alignSelf: 'center' }}
             className={styles.submitButton}
           >
-            Submit
+            Create responses
           </Button>
         </Box>
       </Modal>

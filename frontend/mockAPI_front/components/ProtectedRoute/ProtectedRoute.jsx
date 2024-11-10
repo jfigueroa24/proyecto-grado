@@ -4,10 +4,12 @@ import { authContext } from '../Auth/AuthContext';
 import PropTypes from 'prop-types';
 
 const ProtectedRoute = ({ children }) => {
+  
   const navigate = useNavigate()
   const { user } = useContext(authContext);
 
   useEffect(() => {
+    console.log(user)
     if(user?.invalid){
       navigate('/login');
     }

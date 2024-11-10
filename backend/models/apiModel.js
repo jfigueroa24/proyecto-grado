@@ -48,8 +48,8 @@ export class modelApi {
   static async updateApi(id, id_user, nombre, description, allowed_methods) {
     try {
       const apiExists = await pool.query(
-        'SELECT * FROM apis WHERE id_user = $1 AND nombre = $2;',
-        [id_user, nombre]
+        'SELECT * FROM apis WHERE id_user = $1 AND nombre = $2 AND id != $3;',
+        [id_user, nombre, id]
       );
 
       if (apiExists.rowCount > 0) {

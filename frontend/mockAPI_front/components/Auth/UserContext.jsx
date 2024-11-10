@@ -1,15 +1,16 @@
 import { authContext } from "./AuthContext.js";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import config from "../../src/config.js";
+import { useLocation } from "react-router-dom";
 
 const UserContext = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [user, setUser] = useState(null);
-  
+  const location = useLocation();
 
-  const getUser = async () => {
-    if(user !== null){
+  const getUser = useCallback(async (force = false) => {
+    if(user !== null && !force){
       return;
     }
 
@@ -28,7 +29,7 @@ const UserContext = ({ children }) => {
     } catch (error) {
       console.error(error);
     }
-  };
+  },[token, user])
 
   const logout = () => {
     localStorage.removeItem("token");
@@ -36,8 +37,9 @@ const UserContext = ({ children }) => {
   };
 
   useEffect(() => {
-    getUser();
-  }, []);
+    setToken(localStorage.getItem("token"))
+    getUser(true);
+  }, [location]);
 
   return (
     <authContext.Provider value={{ user, logout, token }}>

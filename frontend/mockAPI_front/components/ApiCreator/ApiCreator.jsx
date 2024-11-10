@@ -47,7 +47,6 @@ function ApiCreator() {
     }
     
     try {
-      console.log("CREO LA API")
       const api = await fetch(
         `${config.apiUrl}/api/create-api/`,
         {

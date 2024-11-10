@@ -46,13 +46,30 @@ function APIList() {
   }, [apis]);
 
   const handleShowResponses = async (index) =>{
-    const res = await fetch(`${config.apiUrl}/api/get-api/${index}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const { api } = await res.json();
-
-    const url = `${config.apiUrl}/public/${user.base_path}/${api[0].nombre}/`;
-    window.open(url, '_blank')
+    try {
+      const res = await fetch(`${config.apiUrl}/api/get-api/${index}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const { api } = await res.json();
+  
+      const url = `${config.apiUrl}/public/${user.base_path}/${api[0].nombre}/`;
+  
+      try {
+        if(navigator.clipboard){
+          await navigator.clipboard.writeText(url)
+          alert("URL copied to clipboard.")
+        }else{
+          alert("Interact with the application first")
+        }
+      } catch (error) {
+        console.error("Error when copying to clipboard", error)
+        alert("Could not copy URL to clipboard. Please try manually")
+      }
+    
+    } catch (error) {
+      console.error("Error fetching API", error)
+      alert("Error getting API URL")
+    }
   }
 
   const handleDelete = async (index) =>{
