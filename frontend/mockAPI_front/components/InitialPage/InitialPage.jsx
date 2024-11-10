@@ -15,10 +15,10 @@ function Home(){
 
   return(
     <Container maxWidth="sm" className={styles.container}>
-    <Typography variant="h2" align="center" className={styles.title} gutterBottom>API MockAble</Typography>
+    <Typography variant="h2" sx={{mb:0}} align="center" className={styles.title} gutterBottom>API MockAble</Typography>
     <Grid2 container spacing={2} alignItems="center" justifyContent="space-evenly" sx={{ mt: 2 }}>
         <Grid2 item xs={6}>
-          <Typography variant="h5" align="center">
+          <Typography variant="h5" sx={{mb:0}} align="center">
             You do not have an account yet, register
           </Typography>
           <Button
