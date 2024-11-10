@@ -9,7 +9,6 @@ const ProtectedRoute = ({ children }) => {
   const { user } = useContext(authContext);
 
   useEffect(() => {
-    console.log(user)
     if(user?.invalid){
       navigate('/login');
     }

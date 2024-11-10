@@ -19,6 +19,9 @@ function ApiCreator() {
   const [description, setDescription] = useState("");
   const [allowed_methods, setAllowedMethods] = useState([]);
   const [json_data, setJson_data] = useState([]);
+  const [nameError, setNameError] = useState("")
+  const [isNamedValid, setIsNameValid] = useState(false);
+
   const { token } = useContext(authContext);
   const navigate = useNavigate();
 
@@ -30,12 +33,14 @@ function ApiCreator() {
         : prevMethods.filter((method) => method !== value)
     );
   };
+
   const handleJsonDataChange = (e) => {
     setJson_data(e.target.value);
   };
 
   const handleCreate = async (e) => {
     e.preventDefault();
+    if(!isNamedValid) return;
 
     let parsedJsonData;
     try {
@@ -47,6 +52,7 @@ function ApiCreator() {
     }
     
     try {
+      const nameLowerCase = name.toLocaleLowerCase();
       const api = await fetch(
         `${config.apiUrl}/api/create-api/`,
         {
@@ -56,7 +62,7 @@ function ApiCreator() {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            name,
+            name: nameLowerCase,
             description,
             allowed_methods,
             json_data: parsedJsonData,
@@ -76,6 +82,17 @@ function ApiCreator() {
     }
   };
 
+  const handleNameChange = (e) =>{
+    const value = e.target.value;
+    setName(value);
+
+    const isValid = /^[a-zA-Z0-9_-]+$/.test(value)
+    setIsNameValid(isValid)
+
+    setNameError(isNamedValid ? '' : 'The path name API can only contain letters, numbers and hyphens, no spaces or special symbols.')
+
+  }
+
   return (
     <Container maxWidth={"md"} className={styles.container}>
       <h2 className={styles.title}>Creator API</h2>
@@ -87,8 +104,10 @@ function ApiCreator() {
             label="Name"
             type="text"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={handleNameChange}
             required
+            error={!isNamedValid && name !== ""}
+            helperText={nameError || "This will be the API path, it can only contain letters, numbers and dashes."}
           />
           <FormLabel className={styles.labelApiCreator}>Description</FormLabel>
           <TextField
@@ -143,6 +162,7 @@ function ApiCreator() {
             className={styles.buttonSubmit}
             variant="contained"
             type="submit"
+            disabled={!isNamedValid}
           >
             Create API
           </Button>

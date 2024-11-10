@@ -19,19 +19,19 @@ function APIEditor() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [allowed_methods, setAllowedMethods] = useState([]);
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
+  const [nameError, setNameError] = useState("");
+  const [isNamedValid, setIsNameValid] = useState(false);
 
   useEffect(() => {
     const fetchAPI = async () => {
       try {
-        const response = await fetch(`${config.apiUrl}/api/get-api/${id}`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            }         
-          }
-        );
+        const response = await fetch(`${config.apiUrl}/api/get-api/${id}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         const { api } = await response.json();
 
         setName(api[0].nombre);
@@ -39,7 +39,7 @@ function APIEditor() {
         setAllowedMethods(api[0].allowed_methods);
       } catch (error) {
         alert("Error fetching API", error);
-        navigate("/home/get-apis")
+        navigate("/home/get-apis");
       }
     };
     fetchAPI();
@@ -47,17 +47,19 @@ function APIEditor() {
 
   const handleSave = async () => {
     try {
+      const nameLowerCase = name.toLocaleLowerCase();
       const response = await fetch(`${config.apiUrl}/api/update-api/${id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ name, description, allowed_methods }),
+        body: JSON.stringify({ name: nameLowerCase, description, allowed_methods }),
       });
       const data = await response.json();
       if (response.ok) {
         alert("API successfully updated.");
-        navigate("/home/get-apis")
+        navigate("/home/get-apis");
       } else {
         alert(data.message);
       }
@@ -75,18 +77,34 @@ function APIEditor() {
     );
   };
 
+  const handleNameChange = (e) =>{
+    const value = e.target.value;
+    setName(value);
+
+    const isValid = /^[a-zA-Z0-9_-]+$/.test(value)
+    setIsNameValid(isValid)
+
+    setNameError(isNamedValid ? '' : 'The path name API can only contain letters, numbers and hyphens, no spaces or special symbols.')
+
+  }
+
   return (
     <Container maxWidth={"xs"} className={styles.container}>
       <h2 className={styles.title}>Editor API</h2>
-      <form className={styles.formContainer} onSubmit={(e) => e.preventDefault()}>
+      <form
+        className={styles.formContainer}
+        onSubmit={(e) => e.preventDefault()}
+      >
         <div className={styles.leftColumn}>
           <TextField
             className={styles.TextFieldName}
             label="Name"
             type="text"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={handleNameChange}
             required
+            error={!isNamedValid && name !== ""}
+            helperText={nameError || "This will be the API path, it can only contain letters, numbers and dashes."}
           />
           <TextField
             className={styles.TextFieldDescription}
@@ -120,6 +138,7 @@ function APIEditor() {
             variant="contained"
             type="submit"
             onClick={handleSave}
+            disabled={!isNamedValid}
           >
             Update API
           </Button>
