@@ -1,5 +1,6 @@
 import {Button, Container, Grid2, Typography} from '@mui/material'
 import { useNavigate } from 'react-router-dom';
+import styles from './initial-page.module.scss'
 
 function Home(){
   const navigate = useNavigate();
@@ -13,8 +14,8 @@ function Home(){
   }
 
   return(
-    <Container maxWidth="sm">
-    <Typography variant="h2" align="center" gutterBottom>API MockAble</Typography>
+    <Container maxWidth="sm" className={styles.container}>
+    <Typography variant="h2" align="center" className={styles.title} gutterBottom>API MockAble</Typography>
     <Grid2 container spacing={2} alignItems="center" justifyContent="space-evenly" sx={{ mt: 2 }}>
         <Grid2 item xs={6}>
           <Typography variant="h5" align="center">

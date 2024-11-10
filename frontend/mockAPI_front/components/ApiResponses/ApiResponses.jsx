@@ -24,6 +24,8 @@ function ApiResponses() {
   const { id } = useParams();
   const { token, user } = useContext(authContext);
 
+
+
   const [responses, setResponses] = useState([]);
   const [allowed_methods, setAllowedMethods] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -35,7 +37,6 @@ function ApiResponses() {
         return;
       }
       try {
-        //REVISAR SI SE PUEDEN TRAER API y RESPONSES en un SOLO JSON
         const res = await fetch(`${config.apiUrl}/api/get-api/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -341,15 +342,25 @@ function ApiResponses() {
               marginTop: '16px',
             }}
           />
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleCreateResponse}
-            sx={{ mt: 2, alignSelf: 'center' }}
-            className={styles.submitButton}
-          >
-            Create responses
-          </Button>
+
+          <div className={styles.buttonSubmitContainer}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleCreateResponse}
+              sx={{ alignSelf: 'center' }}
+              className={styles.submitButton}
+            >
+              Create responses
+            </Button>
+            <Button 
+              className={styles.buttonCancel}
+              variant="contained"
+              sx={{backgroundColor: "#a22"}}
+              onClick={handleCloseModal}>
+              Cancel
+            </Button>
+          </div>
         </Box>
       </Modal>
     </Container>

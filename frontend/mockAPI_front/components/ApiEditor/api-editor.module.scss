@@ -46,6 +46,18 @@
 .buttonSubmitContainer {
   grid-column: 1 / span 2; 
   display: flex;
-  justify-content: center;
+  justify-content: space-evenly;
   margin-top: 20px;
+}
+
+.buttonSubmit {
+  width: 25%; 
+  text-align: center;
+  text-wrap: nowrap;
+}
+
+.buttonCancel{
+
+  width: 25%; 
+  text-align: center;
 }

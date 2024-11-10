@@ -32,7 +32,7 @@ function Register() {
 
   return (
     <Container maxWidth="sm" className={styles.registerContainer}>
-      <Typography className={styles.titleRegister} variant="h4" align="center" gutterBottom>Register</Typography>
+      <Typography sx={{fontWeight: "bold", fontFamily:"sans-serif", fontSize:32, m:0}} variant="h2" align="center" className={styles.title} gutterBottom>Register</Typography>
         <form className={styles.formRegister} onSubmit={handleRegister}>
         <TextField
           className={styles.TextField}

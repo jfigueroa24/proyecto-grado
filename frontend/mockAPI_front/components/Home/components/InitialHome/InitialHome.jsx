@@ -41,7 +41,7 @@ function InitialHome(){
             gutterBottom
             sx={{ color: "text.secondary", fontSize: 14 }}
           >
-            Welcome, {user.name}
+            Home of {user.name}
           </Typography>
           <Typography sx={{ color: "text.secondary", mb: 1.5 }}>
             Count APIs: {count}

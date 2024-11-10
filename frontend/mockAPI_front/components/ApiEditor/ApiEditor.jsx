@@ -142,6 +142,13 @@ function APIEditor() {
           >
             Update API
           </Button>
+          <Button 
+            className={styles.buttonCancel}
+            variant="contained"
+            sx={{backgroundColor: "#a22"}}
+            onClick={() => navigate("/home/get-apis")}>
+            Cancel
+          </Button>
         </div>
       </form>
     </Container>

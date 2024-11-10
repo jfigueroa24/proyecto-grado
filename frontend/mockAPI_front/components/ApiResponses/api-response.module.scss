@@ -40,3 +40,21 @@
   margin: 25px auto; 
   overflow-y: auto;
 }
+
+.buttonSubmitContainer {
+  grid-column: 1 / span 2; 
+  display: flex;
+  justify-content: space-evenly;
+  align-content: center;
+  margin-top: 20px;
+}
+
+.buttonSubmit {
+  width: 25%; 
+  text-align: center;
+}
+
+.buttonCancel{
+  width: 15%; 
+  text-align: center;
+}

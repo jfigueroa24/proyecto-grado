@@ -1,0 +1,26 @@
+* {
+  box-sizing: border-box;
+}
+
+.container {
+  outline: 3px solid #4b7c91;
+  background-color: #eee;
+  border-radius: 2px;
+  padding: 20px 15px;
+  box-shadow: 0px 0px 20px 4px rgba(75, 124, 145, 0.5);
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 12%;
+}
+
+.title {
+  display: flex;
+  justify-content: center;
+  font-family: sans-serif;
+  font-weight: bold;
+  font-size: 32px;
+  margin: 5px 0;
+}
