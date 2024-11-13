@@ -1,0 +1,77 @@
+* {
+  box-sizing: border-box;
+}
+
+.container {
+  outline: 3px solid #4b7c91;
+  background-color: #eee;
+  border-radius: 2px;
+  padding: 20px 15px;
+  margin-top: 5em;
+  box-shadow: 0px 0px 20px 4px rgba(75, 124, 145, 0.5);
+  max-width: 800px; 
+  margin: 25px auto;
+}
+
+.title {
+  display: flex;
+  justify-content: center;
+  font-family: sans-serif;
+  font-weight: bold;
+  font-size: 32px;
+  margin: 5px 0;
+}
+
+.formContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 20px;
+}
+
+.leftColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.rightColumn {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.labelApiCreator {
+  margin-bottom: 5px;
+}
+
+.TextArea {
+  width: 100%;
+  height: 300px;
+  resize: vertical;
+}
+
+.TextFieldName,
+.TextFieldDescription {
+  width: 100%;
+  background-color: #fff;
+}
+
+.buttonSubmitContainer {
+  grid-column: 1 / span 2; 
+  display: flex;
+  justify-content: space-evenly;
+  margin-top: 20px;
+}
+
+.buttonSubmit {
+  width: 25%; 
+  text-align: center;
+}
+
+.buttonCancel{
+  background-color: #a22;
+  width: 25%; 
+  text-align: center;
+}

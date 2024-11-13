@@ -2,20 +2,18 @@ import { modelApi } from '../models/apiModel.js';
 
 export const validateApiOwnership = async (req, res, next) => {
   try {
-    const { nombreApi, base_path } = req.params;
-    const userId = req.user.id_user;
+    const { id } = req.params;
+    const { id_user } = req.user;
     let api = null;
-    if (nombreApi === undefined) {
-      api = await modelApi.getAllApis(base_path);
+    if (id === undefined) {
+      api = await modelApi.getAllApis(id_user);
     } else {
-      api = await modelApi.getApiByBasePathAndName(nombreApi, base_path);
+      api = await modelApi.findApiById(id, id_user);
     }
-
     if (!api || api.length === 0) {
       return res.status(404).json({ message: 'API not found' });
     }
-
-    if (api[0].id_user !== userId) {
+    if (api[0].id_user !== id_user) {
       return res.status(403).json({
         message: 'You do not have permission to access or modify this API',
       });

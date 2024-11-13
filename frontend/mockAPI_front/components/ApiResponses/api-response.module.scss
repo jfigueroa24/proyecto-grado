@@ -1,0 +1,60 @@
+* {
+  box-sizing: border-box;
+}
+
+.container {
+  outline: 3px solid #4b7c91;
+  background-color: #eee;
+  border-radius: 2px;
+  padding: 20px 15px;
+  margin-top: 5em;
+  box-shadow: 0px 0px 20px 4px rgba(75, 124, 145, 0.5);
+  max-width: 800px; 
+  margin: 25px auto;
+}
+
+.title{
+  display: flex;
+  justify-content: center;
+  font-family: sans-serif;
+  margin: 5px 0;
+}
+
+.TextArea {
+  width: 100%;
+  resize: vertical;
+}
+
+.modalStyle{
+  margin: 0 auto; 
+}
+
+.modalBoxStyle{
+  outline: 3px solid #4b7c91;
+  background-color: #eee;
+  border-radius: 2px;
+  padding: 20px 15px;
+  margin-top: 5em;
+  box-shadow: 0px 0px 20px 4px rgba(75, 124, 145, 0.5);
+  max-width: 800px; 
+  margin: 25px auto; 
+  overflow-y: auto;
+}
+
+.buttonSubmitContainer {
+  grid-column: 1 / span 2; 
+  display: flex;
+  justify-content: space-evenly;
+  align-content: center;
+  margin-top: 20px;
+}
+
+.buttonSubmit {
+  width: 25%; 
+  text-align: center;
+}
+
+.buttonCancel{
+  width: 15%; 
+  text-align: center;
+}

@@ -1,12 +1,19 @@
 import { modelApi } from '../models/apiModel.js';
 import { modelResponse } from '../models/responseModel.js';
+import { modelUser } from '../models/userModel.js';
 
 export class apiController {
-  static async getAllApis(req, res) {
+  static async getApis(req, res) {
     try {
-      const { base_path } = req.params;
-      const apis = await modelApi.getAllApis(base_path);
-      return res.status(200).json(apis);
+      const { id_user } = req.user;
+      const apis = await modelApi.getAllApis(id_user);
+      const apisWithResponses = await Promise.all(
+        apis.map(async (api) => {
+          const responses = await modelResponse.getResponses(api.id);
+          return { api, responses };
+        })
+      );
+      return res.status(200).json(apisWithResponses);
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }
@@ -14,13 +21,9 @@ export class apiController {
 
   static async getApi(req, res) {
     try {
-      const { base_path, nombreApi } = req.params;
-      console.log(base_path, nombreApi);
-      const api = await modelApi.getApiByBasePathAndName(nombreApi, base_path);
-      if (!api) {
-        return res.status(404).json({ error: 'API not found' });
-      }
-      console.log(api[0].id);
+      const { id_user } = req.user;
+      const { id } = req.params;
+      const api = await modelApi.findApiById(id, id_user);
       const responses = await modelResponse.getResponses(api[0].id);
 
       return res.status(200).json({ api, responses });
@@ -31,18 +34,21 @@ export class apiController {
 
   static async createApi(req, res) {
     try {
-      const { id_user, basePath } = req.user;
-      const { nombre, description, allowed_methods, json_data } = req.body;
-
-      const base_url = `/${basePath}/${nombre}/`;
-
+      const { id_user } = req.user;
+      const { name, description, allowed_methods, json_data } = req.body;
       const newApi = await modelApi.createApi({
-        nombre,
+        name,
         description,
-        id_user: id_user,
-        base_url,
+        id_user,
         allowed_methods,
       });
+
+      if (newApi === null) {
+        return res
+          .status(400)
+          .json({ message: 'API with this name already exists for this user' });
+      }
+
       let newResponse = null;
       if (json_data) {
         newResponse = await modelResponse.createResponse(newApi.id, json_data);
@@ -58,22 +64,24 @@ export class apiController {
     }
   }
 
-  static async updateApiMethods(req, res) {
+  static async updateApi(req, res) {
     try {
       const { id_user } = req.user;
-      const { nombreApi } = req.params;
-      const { allowed_methods } = req.body;
+      const { id } = req.params;
+      const { name, description, allowed_methods } = req.body;
 
       const updateApi = await modelApi.updateApi(
-        nombreApi,
+        id,
         id_user,
+        name,
+        description,
         allowed_methods
       );
-      if (!updateApi) {
-        return res.status(404).json({
-          message:
-            'API not found or user is not authorized to update this API.',
-        });
+
+      if (updateApi === null) {
+        return res
+          .status(400)
+          .json({ message: 'API with this name already exists for this user' });
       }
 
       return res
@@ -86,17 +94,10 @@ export class apiController {
 
   static async deleteApi(req, res) {
     try {
-      console.log('Entro deleteApi');
       const { id_user } = req.user;
-      const { nombreApi } = req.params;
+      const { id } = req.params;
 
-      const deletedApi = await modelApi.deleteApi(nombreApi, id_user);
-      if (!deletedApi) {
-        return res.status(404).json({
-          message:
-            'API not found or user is not authorized to update this API.',
-        });
-      }
+      const deletedApi = await modelApi.deleteApi(id, id_user);
 
       return res
         .status(200)
@@ -108,13 +109,13 @@ export class apiController {
 
   static async getResponses(req, res) {
     try {
-      const { base_path, nombreApi } = req.params;
-      const api_id = await modelApi.getApiByBasePathAndName(
-        nombreApi,
-        base_path
+      const { base_path, nombre_api } = req.params;
+      const api_id = await modelUser.getApiByBasePathAndName(
+        base_path,
+        nombre_api
       );
 
-      const responses = await modelResponse.getResponses(api_id[0].id);
+      const responses = await modelResponse.getResponses(api_id.id);
       if (!responses) {
         return res.status(404).json({ error: 'Responses not found' });
       }
@@ -127,73 +128,80 @@ export class apiController {
 
   static async getResponseById(req, res) {
     try {
-      const { base_path, nombreApi, idRegistro } = req.params;
-      const api_id = await modelApi.getApiByBasePathAndName(
-        nombreApi,
-        base_path
+      const { base_path, nombre_api, indice } = req.params;
+      const api_id = await modelUser.getApiByBasePathAndName(
+        base_path,
+        nombre_api
       );
 
-      const response = await modelResponse.getResponseId(
-        api_id[0].id,
-        idRegistro
-      );
+      const response = await modelResponse.getResponseId(api_id.id, indice);
       if (!response) {
         return res.status(404).json({ error: 'Response not found' });
       }
 
-      return res.status(200).json({ response });
+      return res.status(200).json(response);
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }
   }
+
   static async createResponse(req, res) {
     try {
-      const { nombreApi } = req.params;
+      const { base_path, nombre_api } = req.params;
       const { json_data } = req.body;
-      const api_id = modelApi.getApiByBasePathAndName(nombreApi, base_path);
+      const api_id = await modelUser.getApiByBasePathAndName(
+        base_path,
+        nombre_api
+      );
       if (!api_id) {
         return res.status(404).json({ error: 'API not found' });
       }
-      const response = await modelResponse.createResponse(api_id, json_data);
+      const response = await modelResponse.createResponse(api_id.id, json_data);
 
-      return res.status(200).json({ response });
+      return res.status(200).json(response);
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }
   }
 
-  static async updateApiResponse(req, res) {
+  static async updateResponse(req, res) {
     try {
-      const { nombreApi, idRegistro } = req.params;
       const { updatedData } = req.body;
-      const updateResponse = await modelResponse.updateResponse(
-        nombreApi,
-        idRegistro,
+      const { base_path, nombre_api, indice } = req.params;
+      const api_id = await modelUser.getApiByBasePathAndName(
+        base_path,
+        nombre_api
+      );
+      const response = await modelResponse.updateResponse(
+        api_id.id,
+        indice,
         updatedData
       );
 
-      if (!updateResponse) {
+      if (!response) {
         return res.status(404).json({
           message: 'Response not found.',
         });
       }
+
       return res
         .status(200)
-        .json({ message: 'Response updated successfully', updateResponse });
+        .json({ message: 'Response updated successfully', response });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }
   }
 
-  static async deleteApiResponse(req, res) {
+  static async deleteResponse(req, res) {
     try {
-      const { nombreApi, idRegistro } = req.params;
-      const deletedResponse = await modelResponse.deleteResponse(
-        nombreApi,
-        idRegistro
+      const { base_path, nombre_api, indice } = req.params;
+      const api_id = await modelUser.getApiByBasePathAndName(
+        base_path,
+        nombre_api
       );
+      const response = await modelResponse.deleteResponse(api_id.id, indice);
 
-      if (!deletedResponse) {
+      if (!response) {
         return res.status(404).json({
           message: 'Response not found.',
         });
@@ -201,7 +209,7 @@ export class apiController {
 
       return res
         .status(200)
-        .json({ message: 'Response deleted successfully', deletedResponse });
+        .json({ message: 'Response deleted successfully', response });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }

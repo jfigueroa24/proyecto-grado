@@ -1,0 +1,24 @@
+.loginContainer{
+  outline: 3px solid #4b7c91;
+  background-color: #eee;
+  border-radius: 2px;
+  padding: 20px 15px;
+  margin-top: 5em;
+  box-shadow: 0px 0px 20px 4px rgba(75,124,145,0.5);
+}
+
+.formLogin{
+  display: flex;
+  flex-direction: column;
+  justify-items: center;
+  align-items: center;
+}
+
+.TextField{
+  background-color: #fff;
+}
+
+.Button{
+  max-width: 50%;
+  margin: auto;
+}

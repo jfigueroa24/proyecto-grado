@@ -1,44 +1,53 @@
 import { Router } from 'express';
 import { apiController } from '../controllers/apiController.js';
-import { validateAllowedMethods } from '../middlewares/allowedMethodsMiddleware.js';
 import { authenticate } from '../middlewares/authenticationMiddleware.js';
 import { validateApiOwnership } from '../middlewares/apiOwnerMiddleware.js';
-import { validateBasePath } from '../middlewares/validateBasePath.js';
+import { userController } from '../controllers/userController.js';
+import { validateAllowedMethods } from '../middlewares/allowedMethodsMiddleware.js';
 
 export const privateApiRouter = Router();
 
 privateApiRouter.use(authenticate);
+privateApiRouter.get('/get-user', userController.getUser);
+privateApiRouter.get('/get-apis', validateApiOwnership, apiController.getApis);
 
 privateApiRouter.get(
-  '/:base_path/',
+  '/get-api/:id',
   validateApiOwnership,
-  validateAllowedMethods('GET'),
-  apiController.getAllApis
-);
-
-privateApiRouter.get(
-  '/:base_path/:nombreApi',
-  validateApiOwnership,
-  validateAllowedMethods('GET'),
   apiController.getApi
 );
 
-privateApiRouter.post(
-  '/:base_path/',
-  validateBasePath,
-  apiController.createApi
-);
+privateApiRouter.post('/create-api', apiController.createApi);
 
 privateApiRouter.put(
-  '/:base_path/:nombreApi',
-  validateAllowedMethods('PUT'),
+  '/update-api/:id',
   validateApiOwnership,
-  apiController.updateApiMethods
+  apiController.updateApi
 );
 
 privateApiRouter.delete(
-  '/:base_path/:nombreApi',
-  validateAllowedMethods('DELETE'),
+  '/delete-api/:id',
   validateApiOwnership,
   apiController.deleteApi
+);
+
+privateApiRouter.post(
+  '/:base_path/:nombre_api',
+  validateApiOwnership,
+  validateAllowedMethods('POST'),
+  apiController.createResponse
+);
+
+privateApiRouter.put(
+  '/:base_path/:nombre_api/:indice',
+  validateApiOwnership,
+  validateAllowedMethods('PUT'),
+  apiController.updateResponse
+);
+
+privateApiRouter.delete(
+  '/:base_path/:nombre_api/:indice',
+  validateApiOwnership,
+  validateAllowedMethods('DELETE'),
+  apiController.deleteResponse
 );
