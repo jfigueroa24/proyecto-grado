@@ -43,7 +43,8 @@ function APIList() {
       }
     };
     userApis();
-  }, [apis]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
 
   const handleShowResponses = async (index) => {
     try {
