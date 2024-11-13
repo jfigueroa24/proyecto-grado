@@ -15,4 +15,5 @@ export const pool = new pg.Pool({
   database: DB_DATABASE,
   port: DB_PORT,
   jwt_secret: JWT_SECRET,
+  ssl: process.env.NODE_ENV !== 'development',
 });
