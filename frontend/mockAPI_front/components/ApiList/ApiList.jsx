@@ -86,8 +86,8 @@ function APIList() {
       });
       const data = await response.json();
       if (response.ok) {
+        setApis((prevApis) => prevApis.filter((item) => item.api.id !== index));
         alert(data.message);
-        setApis((prevApis) => prevApis.filter((api) => api.indice !== index));
       } else if (data.length === 0) {
         return;
       } else {
